@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Refresh on inactivity
 // @namespace    https://github.com/pirminis/refresh-on-inactivity
-// @version      0.0.3
+// @version      0.0.4
 // @description  Automatically refresh the page when the user is idle
 // @author       pirminis
 // @updateURL    https://github.com/pirminis/refresh-on-inactivity/raw/master/refresh-on-inactivity.user.js
@@ -22,9 +22,9 @@
 
   const config = {
     counterUpdateInterval: 1000,
-    warnWhenCounterReachesValue: 5,
-    refreshWhenCounterReachesValue: 10,
-    notificationTimeout: 5000
+    warnWhenCounterReachesValue: 50,
+    refreshWhenCounterReachesValue: 60,
+    notificationTimeout: 10000
   };
 
   global.refreshOnInactivityLoaded = true;
@@ -33,6 +33,9 @@
   let counterInterval = null;
 
   resetCounterOnMouseMove();
+  resetCounterOnScroll();
+  resetCounterOnKeyUp();
+  resetCounterOnClick();
   startCounterTimer();
 
   function showNotification() {
@@ -64,21 +67,32 @@
       } else if (counter == config.refreshWhenCounterReachesValue) {
         refresh();
       }
-
-      console.log(`[DEBUG] increasing idling_counter to ${newValue}`);
     }, config.counterUpdateInterval);
   }
 
   function resetCounterOnMouseMove() {
-    document.removeEventListener("mousemove", periodicallyIncrementCounter);
-    document.addEventListener("mousemove", periodicallyIncrementCounter);
+    document.removeEventListener("mousemove", resetCounter);
+    document.addEventListener("mousemove", resetCounter);
   }
 
-  function periodicallyIncrementCounter() {
+  function resetCounterOnScroll() {
+    document.removeEventListener("scroll", resetCounter);
+    document.addEventListener("scroll", resetCounter);
+  }
+
+  function resetCounterOnKeyUp() {
+    document.removeEventListener("keyup", resetCounter);
+    document.addEventListener("keyup", resetCounter);
+  }
+
+  function resetCounterOnClick() {
+    document.removeEventListener("click", resetCounter);
+    document.addEventListener("click", resetCounter);
+  }
+
+  function resetCounter() {
     requestAnimationFrame(function () {
       counter = 0;
-
-      console.log('[DEBUG] reset idling_counter to 0');
     });
   }
 })(window);
