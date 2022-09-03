@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Refresh on inactivity
 // @namespace    https://github.com/pirminis/refresh-on-inactivity
-// @version      0.0.4
+// @version      0.0.6
 // @description  Automatically refresh the page when the user is idle
 // @author       pirminis
 // @updateURL    https://github.com/pirminis/refresh-on-inactivity/raw/master/refresh-on-inactivity.user.js
@@ -9,8 +9,6 @@
 // @match        http://*/*
 // @match        https://*/*
 // @grant        GM_notification
-// @grant        GM_setValue
-// @grant        GM_getValue
 // ==/UserScript==
 
 (function(global) {
@@ -20,79 +18,83 @@
     return;
   }
 
-  const config = {
-    counterUpdateInterval: 1000,
-    warnWhenCounterReachesValue: 50,
-    refreshWhenCounterReachesValue: 60,
-    notificationTimeout: 10000
-  };
+  const oneSecond = 1000;
+
+  let timerInterval = 1000;
+
+  let notifications = [
+    {
+      showNotification: true,
+      refresh: false,
+      triggerFrom: 10,
+      triggerTo: 20,
+      notificationTimeout: 10000,
+      notificationText: "Refreshing page in 20 seconds",
+      processed: false
+    },
+    {
+      showNotification: true,
+      refresh: false,
+      triggerFrom: 20,
+      triggerTo: 30,
+      notificationTimeout: 10000,
+      notificationText: "Refreshing page in 10 seconds",
+      processed: false
+    },
+    {
+      showNotification: false,
+      refresh: true,
+      triggerFrom: 30,
+      triggerTo: 9999999,
+      processed: false
+    }
+  ];
 
   global.refreshOnInactivityLoaded = true;
 
-  let counter = 0;
-  let counterInterval = null;
+  let startTime = Date.now();
+  let timer = null;
 
-  resetCounterOnMouseMove();
-  resetCounterOnScroll();
-  resetCounterOnKeyUp();
-  resetCounterOnClick();
-  startCounterTimer();
+  startTimer();
 
-  function showNotification() {
-    const details = {
+  function showNotification(text, timeout) {
+    const options = {
       title: "Warning",
-      text: "I am about to refresh the page...",
-      timeout: config.notificationTimeout,
+      text: text,
+      timeout: timeout,
       silent: true
     };
 
-    GM_notification(details);
+    GM_notification(options);
   }
 
   function refresh() {
     global.location.reload();
   }
 
-  function startCounterTimer() {
-    clearInterval(counterInterval);
+  function startTimer() {
+    clearInterval(timer);
 
-    counterInterval = setInterval(function () {
-      const currentValue = counter;
-      const newValue = currentValue + 1;
+    timer = setInterval(function () {
+      let counter = Math.floor((Date.now() - startTime) / oneSecond);
 
-      counter = newValue;
+      for (let i = 0; i < notifications.length; i++) {
+        let item = notifications[i];
 
-      if (counter == config.warnWhenCounterReachesValue) {
-        showNotification();
-      } else if (counter == config.refreshWhenCounterReachesValue) {
-        refresh();
+        if (item.processed || counter < item.triggerFrom || counter >= item.triggerTo) {
+          continue;
+        }
+
+        if (item.showNotification) {
+          showNotification(item.notificationText, item.notificationTimeout);
+          item.processed = true;
+          break;
+        } else if (item.refresh) {
+          item.processed = true;
+          refresh();
+          break;
+        }
       }
-    }, config.counterUpdateInterval);
-  }
-
-  function resetCounterOnMouseMove() {
-    document.removeEventListener("mousemove", resetCounter);
-    document.addEventListener("mousemove", resetCounter);
-  }
-
-  function resetCounterOnScroll() {
-    document.removeEventListener("scroll", resetCounter);
-    document.addEventListener("scroll", resetCounter);
-  }
-
-  function resetCounterOnKeyUp() {
-    document.removeEventListener("keyup", resetCounter);
-    document.addEventListener("keyup", resetCounter);
-  }
-
-  function resetCounterOnClick() {
-    document.removeEventListener("click", resetCounter);
-    document.addEventListener("click", resetCounter);
-  }
-
-  function resetCounter() {
-    requestAnimationFrame(function () {
-      counter = 0;
-    });
+    }, timerInterval);
   }
 })(window);
