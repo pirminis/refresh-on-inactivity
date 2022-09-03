@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Refresh on inactivity
 // @namespace    https://github.com/pirminis/refresh-on-inactivity
-// @version      0.0.6
+// @version      0.0.7
 // @description  Automatically refresh the page when the user is idle
 // @author       pirminis
 // @updateURL    https://github.com/pirminis/refresh-on-inactivity/raw/master/refresh-on-inactivity.user.js
@@ -26,19 +26,28 @@
     {
       showNotification: true,
       refresh: false,
-      triggerFrom: 10,
-      triggerTo: 20,
-      notificationTimeout: 10000,
-      notificationText: "Refreshing page in 20 seconds",
+      triggerFrom: 2940, // 49 minutes
+      triggerTo: 3240, // 54 minutes
+      notificationTimeout: 300000, // 5 minutes
+      notificationText: "Refreshing page in 10 minutes",
       processed: false
     },
     {
       showNotification: true,
       refresh: false,
-      triggerFrom: 20,
-      triggerTo: 30,
-      notificationTimeout: 10000,
-      notificationText: "Refreshing page in 10 seconds",
+      triggerFrom: 3240, // 54 minutes
+      triggerTo: 3480, // 58 minutes
+      notificationTimeout: 240000, // 4 minutes
+      notificationText: "Refreshing page in 5 minutes",
+      processed: false
+    },
+    {
+      showNotification: true,
+      refresh: false,
+      triggerFrom: 3480, // 58 minutes
+      triggerTo: 3540, // 59 minutes
+      notificationTimeout: 60000, // 1 minute
+      notificationText: "Refreshing page in 1 minute",
       processed: false
     },
     {
