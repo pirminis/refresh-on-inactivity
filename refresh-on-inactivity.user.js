@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Refresh on inactivity
 // @namespace    https://github.com/pirminis/refresh-on-inactivity
-// @version      0.0.7
+// @version      0.0.8
 // @description  Automatically refresh the page when the user is idle
 // @author       pirminis
 // @updateURL    https://github.com/pirminis/refresh-on-inactivity/raw/master/refresh-on-inactivity.user.js
@@ -53,7 +53,7 @@
     {
       showNotification: false,
       refresh: true,
-      triggerFrom: 30,
+      triggerFrom: 3540,
       triggerTo: 9999999,
       processed: false
     }
