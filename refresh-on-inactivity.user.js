@@ -11,6 +11,7 @@
 // @grant        GM_notification
 // ==/UserScript==
 
+/* global GM_notification */
 (function(global) {
   'use strict';
 
@@ -19,42 +20,41 @@
   }
 
   const oneSecond = 1000;
-
-  let timerInterval = 1000;
+  const timerInterval = 1000;
 
   let notifications = [
     {
       showNotification: true,
       refresh: false,
-      triggerFrom: 2940, // 49 minutes
-      triggerTo: 3240, // 54 minutes
-      notificationTimeout: 300000, // 5 minutes
+      triggerFrom: stringToSeconds('49m'),
+      triggerTo: stringToSeconds('54m'),
+      notificationTimeout: secondsToMilliseconds(stringToSeconds('5m')),
       notificationText: "Refreshing page in 10 minutes",
       processed: false
     },
     {
       showNotification: true,
       refresh: false,
-      triggerFrom: 3240, // 54 minutes
-      triggerTo: 3480, // 58 minutes
-      notificationTimeout: 240000, // 4 minutes
+      triggerFrom: stringToSeconds('54m'),
+      triggerTo: stringToSeconds('58m'),
+      notificationTimeout: secondsToMilliseconds(stringToSeconds('4m')),
       notificationText: "Refreshing page in 5 minutes",
       processed: false
     },
     {
       showNotification: true,
       refresh: false,
-      triggerFrom: 3480, // 58 minutes
-      triggerTo: 3540, // 59 minutes
-      notificationTimeout: 60000, // 1 minute
+      triggerFrom: stringToSeconds('58m'),
+      triggerTo: stringToSeconds('59m'),
+      notificationTimeout: secondsToMilliseconds(stringToSeconds('1m')),
       notificationText: "Refreshing page in 1 minute",
       processed: false
     },
     {
       showNotification: false,
       refresh: true,
-      triggerFrom: 3540,
-      triggerTo: 9999999,
+      triggerFrom: stringToSeconds('59m'),
+      triggerTo: stringToSeconds('999h'),
       processed: false
     }
   ];
@@ -65,6 +65,22 @@
   let timer = null;
 
   startTimer();
+
+  function secondsToMilliseconds(number) {
+    return parseInt(number) * 1000;
+  }
+
+  function stringToSeconds(value) {
+    const timePattern = /^(?:(\d+)h\s?)?(?:(\d+)m\s?)?(?:(\d+)s\s?)?/;
+
+    let parsedString = value.toString().match(timePattern);
+
+    let hours = parseInt(parsedString[1] || 0);
+    let minutes = parseInt(parsedString[2] || 0);
+    let seconds = parseInt(parsedString[3] || 0);
+
+    return hours * 60 * 60 + minutes * 60 + seconds;
+  }
 
   function showNotification(text, timeout) {
     const options = {
