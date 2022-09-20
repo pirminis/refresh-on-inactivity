@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name         Refresh on inactivity
 // @namespace    https://github.com/pirminis/refresh-on-inactivity
-// @version      0.0.10
-// @description  Automatically refresh the page when the user is idle
+// @version      0.0.11
+// @description  Automatically refresh esveikata.lt page the page when the user is idle
 // @author       pirminis
+// @match        https://specialistas.esveikata.lt
+// @match        https://specialistas.esveikata.lt/*
 // @updateURL    https://github.com/pirminis/refresh-on-inactivity/raw/master/refresh-on-inactivity.user.js
 // @downloadURL  https://github.com/pirminis/refresh-on-inactivity/raw/master/refresh-on-inactivity.user.js
 // @grant        GM_notification
